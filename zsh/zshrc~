@@ -1,0 +1,76 @@
+# If you come from bash you might have to change your $PATH.
+# export PATH=$HOME/bin:/usr/local/bin:$PATH
+
+# Path to your oh-my-zsh installation.
+# MACRO is seperated 
+
+alias ll="ls -l"
+alias addhis="attach_elem_after_history_object"
+setopt no_nomatch
+
+# History in cache directory:
+HISTSIZE=10000
+SAVEHIST=10000
+HISTFILE=~/.cache/zsh/zsh-hist-cache/history
+
+bindkey -v
+export CONFDIR="${HOME}/.config/zsh"
+export CACHDIR="${HOME}/.cache/zsh"
+export PERIOD=3600
+
+#========================= COMMON SET =========================#
+export BINADIR=${CONFDIR}/bin
+
+plugins=( 
+  vi-mode
+  zsh-autosuggestions
+)
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=green"
+
+# must before plugin source
+for config_file ($CONFDIR/lib/*.zsh); do
+  source $config_file
+done
+
+for plugin ($plugins); do
+  source $CONFDIR/plugins/$plugin/$plugin.plugin.zsh
+done
+
+PROMPT='%F{226}~>%f %F{51}%n%f %F{226}~>%f %F{40}%m%f %F{226}~>%f %F{154}%2~%f %F{226}%B~>%b%f '
+#PROMPT='%F{226}»%f %F{51}%n%f %F{226}»%f %F{40}%m%f %F{226}»%f %F{154}%2~%f %F{226}%B»%b%f '
+#
+local return_code="%(?..%F{red}%? ↵%f)"
+#RPS1="${return_code}"
+
+#========================= EASY MOTION SET =========================#
+# VI OPTS
+VI_MODE_SET_CURSOR=true
+source $CONFDIR/zsh-easy-motion/easy_motion.plugin.zsh
+bindkey '^[h' vi-easy-trigger-b  
+bindkey '^[j' vi-easy-trigger-w  
+bindkey '^[k' vi-easy-trigger-ge 
+bindkey '^[l' vi-easy-trigger-e  
+
+#========================= DELETE SET =========================#
+autoload -U backward-kill-word-match
+zle -N backward-kill-word-space backward-kill-word-match
+zstyle ':zle:backward-kill-word-space' word-style space
+bindkey '^y' backward-kill-word-space
+
+#========================= HISTORY OBJECT SET =========================#
+HIST_LOG_DIR=${CACHDIR}/zsh-hist-obj
+HIST_OBJ_LOG=${HIST_LOG_DIR}/.obj
+HIST_POS_LOG=${HIST_LOG_DIR}/.pos 
+HIST_CMD_LOG=${HIST_LOG_DIR}/.cmd 
+HIST_TMP_LOG=${HIST_LOG_DIR}/.tmp 
+HIST_ADD_SIZE=100
+source ${CONFDIR}/zsh-hist-obj/zsh-hist-obj.zsh
+bindkey '^n' search_history_object
+#bindkey '^o' fix_history_object
+
+# MENU OPTS
+setopt noautomenu
+
+
+#========================= EXPRIMENT SET =========================#
+#[[ -e $CONFDIR/exp/exp.zsh ]] && source $CONFDIR/exp/exp.zsh
