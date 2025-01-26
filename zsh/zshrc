@@ -68,7 +68,7 @@ HIST_TMP_LOG=${HIST_LOG_DIR}/.tmp
 HIST_ADD_SIZE=100
 source ${CONFDIR}/zsh-hist-obj/zsh-hist-obj.zsh
 bindkey '^n' search_history_object
-#bindkey '^o' fix_history_object
+bindkey '^o' fix_history_object
 
 # MENU OPTS
 setopt noautomenu

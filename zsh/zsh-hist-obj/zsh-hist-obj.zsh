@@ -75,9 +75,6 @@ add-zsh-hook -Uz precmd attach_parts_after_history_object
 
 sort_history_object() {
   tac $HIST_OBJ_LOG | awk '!x[$2]++'  | sort -n -k1,1 -o $HIST_OBJ_LOG
-
-  #cat $HIST_OBJ_LOG | sort -n -r -k2,2 -k1,1 | sort -u -k2,2 | sort -n -k1,1 -o $HIST_OBJ_LOG
-  #tac $HIST_OBJ_LOG | sort -u -k2,2 | sort -n -k1,1 -o $HIST_OBJ_LOG
 }
 add-zsh-hook -Uz periodic sort_history_object
 
@@ -86,13 +83,16 @@ function __howsel {
   local selected num
   setopt localoptions noglobsubst noposixbuiltins pipefail no_aliases 2> /dev/null
 
-  #prefix=`pwd`
-  #$(attach_elem_after_history_object $prefix)
-
-  #selected=( $(cat $HIST_OBJ_LOG | sort -n -r -k2,2 -k1,1 | sort -u -k2,2 | sort -n -k1,1 | awk '{print $2}' | \
-  #selected=( $(tac $HIST_OBJ_LOG | sort -u -k2,2 | sort -r -n -k1,1 | awk '{print $2}' | \
-
   selected=( $(tac $HIST_OBJ_LOG | awk '!x[$2]++'  | awk '{print $2}' | \
+    while read line; do
+        # 如果路径是当前目录的绝对路径，转换为相对路径
+        if [[ "$line" == $(pwd)* ]]; then
+            relative_path=$(realpath --relative-to=$(pwd) "$line")
+            echo "./$relative_path"
+        else
+            echo "$line"
+        fi
+    done | \
     FZF_DEFAULT_OPTS="--height ${FZF_TMUX_HEIGHT:-40%} --reverse $FZF_DEFAULT_OPTS -n2..,.. --tiebreak=index --bind=ctrl-r:toggle-sort,ctrl-z:ignore $1  +m" $(__fzfcmd)) )
 
   local ret=$?
@@ -140,6 +140,7 @@ search_history_object() {
 zle -N  search_history_object
 
 fix_history_object() {
+  echo "\nStarting fix_history_object..."
   rm -f ${HIST_TMP_LOG} && touch ${HIST_TMP_LOG} || return
   cat $HIST_OBJ_LOG | awk '{print $2}' | while read line; do
     if [ ! -z $line ] && [ -e $line ];then 
@@ -154,5 +155,7 @@ fix_history_object() {
   cat ${HIST_OBJ_LOG} | awk '{print NR " " $2}' | sort -n -k1,1 -o ${HIST_OBJ_LOG}
   
   rm -f ${HIST_TMP_LOG} 
+  echo "Finished fix_history_object."
+  zle reset-prompt
 }
-zle -N   fix_history_object
+zle -N  fix_history_object
