@@ -25,6 +25,7 @@ if exists('g:loaded_fzf')
   finish
 endif
 let g:loaded_fzf = 1
+let g:fzf_whole_routine = 1
 
 let s:is_win = has('win32') || has('win64')
 if s:is_win && &shellslash
@@ -498,6 +499,7 @@ endfunction
 let s:need_cmd_window = has('win32unix') && $TERM_PROGRAM ==# 'mintty' && s:compare_versions($TERM_PROGRAM_VERSION, '3.4.5') < 0 && !executable('winpty')
 
 function! fzf#run(...) abort
+  let g:fzf_whole_routine = 1
 try
   let [shell, shellslash, shellcmdflag, shellxquote] = s:use_sh()
 
@@ -914,13 +916,17 @@ function! s:execute_term(dict, command, temps) abort
 
     let lines = s:collect(self.temps)
     if s:exit_handler(self.dict, a:code, self.command, 1) >= 2
-      return
+      let g:fzf_whole_routine = 0
     endif
 
     call s:pushd(self.dict)
     call s:callback(self.dict, lines)
+    
+    if g:fzf_whole_routine == 0
+      return
+    endif
+    
     call self.switch_back(s:getpos() == self.ppos)
-
     if &buftype == 'terminal'
       call feedkeys(&filetype == 'fzf' ? "\<Plug>(fzf-insert)" : "\<Plug>(fzf-normal)")
     endif
@@ -989,6 +995,9 @@ function! s:callback(dict, lines) abort
 
   try
     if has_key(a:dict, 'sink')
+      if g:fzf_whole_routine == 0
+          call a:dict.sink("")
+      endif
       for line in a:lines
         if type(a:dict.sink) == 2
           call a:dict.sink(line)

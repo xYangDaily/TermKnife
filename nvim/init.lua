@@ -12,6 +12,7 @@ vim.g.obj_path = vim.fn.expand("~/.cache/zsh/zsh-hist-obj/.obj")
 
 -- 配色方案
 vim.cmd("colorscheme habamax")
+vim.o.cursorline = true
 
 -- Leader 键
 vim.g.mapleader = " "
@@ -119,7 +120,6 @@ vim.api.nvim_set_keymap("c", "<C-k>", "<UP>", { noremap = true })
 vim.api.nvim_set_keymap("c", "<C-a>", "<Home>", { noremap = true })
 vim.api.nvim_set_keymap("c", "<C-h>", "<S-Left>", { noremap = true })
 vim.api.nvim_set_keymap("c", "<C-l>", "<S-Right>", { noremap = true })
-vim.api.nvim_set_keymap("c", "<C-n>", "<nor>", { noremap = true })
 
 vim.api.nvim_set_keymap("n", "CD", ":cd %:p:h<CR>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<C-c>", ":echo expand('%:p:h')<CR>", { noremap = true, silent = true })
@@ -135,6 +135,7 @@ vim.o.autoindent = true
 vim.opt.list = true  -- 启用可见字符显示
 vim.opt.listchars:append("trail:•")  -- 行尾多余空格显示为圆点
 require('ibl').setup({
+  scope = { enabled = false },
   exclude = {
     filetypes = {
       'help',

@@ -102,8 +102,14 @@ function HistObjTerm()
     down = "~40%",
     options = options,
     sink = function(selected)
-      local result = ":" .. first_part .. reformat_selected(selected) .. right_of_cursor
-      vim.fn.feedkeys(result, 'n')
+      local fzf_whole_routine = vim.g.fzf_whole_routine
+      if fzf_whole_routine == 1 then
+        local result = ":" .. first_part .. reformat_selected(selected) .. right_of_cursor
+        vim.fn.feedkeys(result, 'n')
+      else
+        local result = ":" .. cmdline
+        vim.fn.feedkeys(result, 'n')
+      end
     end,
   })
 end
