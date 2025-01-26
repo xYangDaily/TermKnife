@@ -17,32 +17,7 @@ vim.cmd("colorscheme habamax")
 vim.g.mapleader = " "
 
 -- 插件管理
-vim.cmd [[
-call plug#begin()
-Plug 'easymotion/vim-easymotion'
-Plug 'karb94/neoscroll.nvim'
-Plug 'luochen1990/select-and-search'
-Plug 'junegunn/vim-peekaboo'
-
-Plug 'christoomey/vim-tmux-navigator'
-Plug 'roxma/vim-tmux-clipboard'
-Plug 'edkolev/tmuxline.vim'
-
-Plug 'lukas-reineke/indent-blankline.nvim'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-Plug 'ryanoasis/vim-devicons'
-
-Plug 'tpope/vim-eunuch'
-Plug 'qpkorr/vim-bufkill'
-Plug 'breuckelen/vim-resize'
-
-Plug 'mhinz/vim-startify'
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
-Plug 'preservim/nerdtree'
-call plug#end()
-]]
+require('plugins')
 
 -- ========== Input ==========
 vim.keymap.set("i", "<CR>", "<CR>x<BS>")
