@@ -24,6 +24,12 @@ Plug 'qpkorr/vim-bufkill', {'frozen': 1}
 Plug 'breuckelen/vim-resize', {'frozen': 1}
 Plug 'mhinz/vim-startify', {'frozen': 1}
 
+Plug 'neovim/nvim-lspconfig'  " LSP 配置
+Plug 'williamboman/mason.nvim'  " Mason 管理器（安装 LSP 服务器）
+Plug 'williamboman/mason-lspconfig.nvim'  " Mason 与 lspconfig 集成
+Plug 'hrsh7th/nvim-cmp'  " 自动补全插件
+Plug 'hrsh7th/cmp-nvim-lsp'  " LSP 补全源
+
 call plug#end()
 ]]
 

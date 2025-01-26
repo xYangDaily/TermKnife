@@ -4,7 +4,6 @@ vim.g.NERDTreeMapActivateNode = vim.g.NERDTreeMapActivateNode or 'l'
 vim.g.NERDTreeMapJumpLastChild = '' -- delete default J
 vim.g.NERDTreeMapJumpFirstChild = '' -- delete default H
 vim.g.NERDTreeMapCustomOpen = ' ' -- delete default <CR>
-vim.g.NERDTreeMapUpdirKeepOpen = vim.g.NERDTreeMapUpdirKeepOpen or '<BS>'
 vim.g.NERDTreeMapChangeRoot = vim.g.NERDTreeMapChangeRoot or '<CR>'
 
 vim.api.nvim_set_keymap(
@@ -21,15 +20,25 @@ vim.api.nvim_set_keymap(
   { noremap = true, silent = true } -- 映射选项
 )
 
-function NerdBack()
-  -- 聚焦到 NERDTree 窗口
-  vim.cmd('NERDTreeFocus')
-  vim.api.nvim_call_function('nerdtree#ui_glue#upDir', {1})
-  vim.api.nvim_command('wincmd p')
-end
-vim.api.nvim_set_keymap('n', '<BS>', [[:lua NerdBack()<CR>]], { noremap = true, silent = true })
+-- 自定义函数来判断当前窗口类型并执行相应操作
+function NerdUpDir()
+  -- 获取当前窗口的类型
+  local win_type = vim.fn.win_gettype()
 
-vim.keymap.set('n', '<leader>u', ':NERDTreeToggle<CR><C-W><C-P><C-W>=', { noremap = true, silent = true })
+  if win_type == 'netrw' or vim.bo.filetype == 'nerdtree' then
+    vim.api.nvim_call_function('nerdtree#ui_glue#upDir', {1})
+    vim.cmd('call b:NERDTree.root.refresh()')
+  else
+    vim.cmd('NERDTreeFocus')
+    vim.api.nvim_call_function('nerdtree#ui_glue#upDir', {1})
+    vim.cmd('call b:NERDTree.root.refresh()')
+    vim.api.nvim_command('wincmd p')
+  end
+end
+vim.api.nvim_set_keymap('n', '<BS>', ':lua NerdUpDir()<CR>', { noremap = true, silent = true })
+
+
+vim.keymap.set('n', '<C-p>', ':NERDTreeToggle<CR><C-W><C-P><C-W>=', { noremap = true, silent = true })
 vim.keymap.set('n', '<leader>f', ':NERDTreeFind<CR><C-W><C-P>', { noremap = true, silent = true })
 
 vim.api.nvim_create_autocmd("DirChanged", {

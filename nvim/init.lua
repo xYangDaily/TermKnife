@@ -16,7 +16,7 @@ vim.cmd("colorscheme habamax")
 -- Leader 键
 vim.g.mapleader = " "
 
--- 插件管理
+-- ========== Plugins ==========
 require('plugins')
 
 -- ========== Input ==========
