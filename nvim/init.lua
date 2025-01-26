@@ -108,6 +108,7 @@ vim.keymap.set("n", "<M-l>", ":CmdResizeRight<CR>")
 if use_obj then
   require('hist_obj')
   vim.api.nvim_set_keymap('n', '<C-n>', ':lua HistObjFzf()<CR>', { noremap = true, silent = true })
+  vim.keymap.set('c', '<C-n>', HistObjTerm)
 end
 
 require('nerdtreeconf')
@@ -177,3 +178,5 @@ vim.g["airline#extensions#tabline#formatter"] = "short_path"
 vim.g.startify_enable_special = 0
 vim.g.startify_files_number = 0
 
+-- ========== EXP ==========
+require('exp')

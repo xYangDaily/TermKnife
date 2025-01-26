@@ -1,7 +1,6 @@
 -- hist_obj.lua
 
--- 删除 BUF 标签函数
-function DeleteBufLabel(selected)
+function reformat_selected(selected)
     if selected ~= "" then
         -- 如果以 [BUF] 开头，删除 [BUF] 标签
         if selected:match("^%[BUF%]") then
@@ -10,12 +9,15 @@ function DeleteBufLabel(selected)
         elseif selected:match("^%+") then
             selected = selected:sub(3)
         end
-        vim.cmd("e " .. selected)
     end
+    return selected
 end
 
--- HistObjFzf 函数
-function HistObjFzf()
+function DeleteBufLabel(selected)
+    vim.cmd("e " .. reformat_selected(selected))
+end
+
+function get_selected_list()
     -- 获取活动的缓冲区
     local active_buffers = {}
     for i = 1, vim.fn.bufnr("$") do
@@ -54,10 +56,14 @@ function HistObjFzf()
 
     -- 合并活动缓冲区和候选文件
     local combined = vim.list_extend(active_buffers, candi_files)
+    return combined
+end
 
+-- HistObjFzf 函数
+function HistObjFzf()
     -- 配置 fzf 选项
     local args = {
-        source = combined,
+        source = get_selected_list(),
         down = "~40%",
         options = "--reverse --no-sort --nth 2..",
         sink = DeleteBufLabel,
@@ -65,6 +71,41 @@ function HistObjFzf()
 
     -- 执行 fzf
     vim.fn["fzf#run"](args)
+end
+
+function HistObjTerm()
+  local cmdline = vim.fn.getcmdline()
+  local cursor_pos = vim.fn.getcmdpos()
+  local left_of_cursor = cmdline:sub(1, cursor_pos - 1)
+  local right_of_cursor = cmdline:sub(cursor_pos)
+  local space_pos = left_of_cursor:match(".*%s()") - 1
+
+  local first_part, second_part
+  if space_pos then
+    first_part = left_of_cursor:sub(1, space_pos)
+    second_part = left_of_cursor:sub(space_pos + 1)
+  else
+    first_part = ""
+    second_part = left_of_cursor
+  end
+
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<C-c>', true, false, true), 'n', true)
+  
+  local options = {
+    '--reverse',       -- 反转结果顺序
+    '--no-sort',       -- 禁止排序
+    '--nth', '2..',    -- 只考虑从第二列开始的内容
+    '--query', second_part, -- 使用 second_part 作为默认查询
+  }
+  vim.fn['fzf#run']({
+    source = get_selected_list(),
+    down = "~40%",
+    options = options,
+    sink = function(selected)
+      local result = ":" .. first_part .. reformat_selected(selected) .. right_of_cursor
+      vim.fn.feedkeys(result, 'n')
+    end,
+  })
 end
 
 function get_file_line_count(file_path)
