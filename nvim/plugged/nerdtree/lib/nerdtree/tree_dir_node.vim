@@ -24,6 +24,10 @@ endfunction
 function! s:TreeDirNode.activate(...)
     let l:options = (a:0 > 0) ? a:1 : {}
 
+    if self.isOpen ==# 0
+        call HistObjPushBackDir(self.path.str())
+    endif
+
     call self.toggleOpen(l:options)
 
     " Note that we only re-render the NERDTree for this node if we did NOT

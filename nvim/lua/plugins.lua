@@ -1,3 +1,12 @@
+local histobj = vim.fn.stdpath('config') .. '/plugged/hist-obj/autoload/histobj.vim'
+if vim.fn.isdirectory(vim.fn.fnamemodify(histobj, ":p:h")) == 1 then
+    vim.cmd("source " .. histobj)
+end
+
+local histobjsearch = vim.fn.stdpath('config') .. '/plugged/hist-obj/autoload/histobjsearch.vim'
+if vim.fn.isdirectory(vim.fn.fnamemodify(histobjsearch, ":p:h")) == 1 then
+    vim.cmd("source " .. histobjsearch)
+end
 
 vim.cmd [[
 call plug#begin()

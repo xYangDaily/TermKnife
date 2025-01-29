@@ -8,6 +8,7 @@ vim.o.wildmode = "longest,list"
 vim.o.wildmenu = true
 
 local use_obj = true
+vim.g.fzf_layout = { down = "~70%"}
 vim.g.obj_path = vim.fn.expand("~/.cache/zsh/zsh-hist-obj/.obj")
 
 -- 配色方案
@@ -107,9 +108,12 @@ vim.keymap.set("n", "<M-l>", ":CmdResizeRight<CR>")
 
 -- ========== Settings For Files ==========
 if use_obj then
-  require('hist_obj')
-  vim.api.nvim_set_keymap('n', '<C-n>', ':lua HistObjFzf()<CR>', { noremap = true, silent = true })
-  vim.keymap.set('c', '<C-n>', HistObjTerm)
+  vim.keymap.set('n', '<c-n>', function()
+    vim.cmd('HistObjSearch')
+  end)
+  vim.keymap.set('c', '<c-n>', function()
+    vim.cmd('HistObjSearchTerm')
+  end)
 end
 
 require('nerdtreeconf')
@@ -118,8 +122,8 @@ require('nerdtreeconf')
 vim.api.nvim_set_keymap("c", "<C-j>", "<DOWN>", { noremap = true })
 vim.api.nvim_set_keymap("c", "<C-k>", "<UP>", { noremap = true })
 vim.api.nvim_set_keymap("c", "<C-a>", "<Home>", { noremap = true })
-vim.api.nvim_set_keymap("c", "<C-h>", "<S-Left>", { noremap = true })
-vim.api.nvim_set_keymap("c", "<C-l>", "<S-Right>", { noremap = true })
+vim.api.nvim_set_keymap("c", "<M-h>", "<S-Left>", { noremap = true })
+vim.api.nvim_set_keymap("c", "<M-l>", "<S-Right>", { noremap = true })
 
 vim.api.nvim_set_keymap("n", "CD", ":cd %:p:h<CR>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<C-c>", ":echo expand('%:p:h')<CR>", { noremap = true, silent = true })
