@@ -38,7 +38,6 @@ function! HistObjSort()
     for line in reversed_lines
         " 提取第二列
         let col2 = split(line)[1]
-        "let col2 = matchstr(line, '^\S\+\s\+\(\S\+\)')
         if !has_key(seen, col2)
             call add(unique_lines, line)
             let seen[col2] = 1

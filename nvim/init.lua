@@ -8,7 +8,6 @@ vim.o.wildmode = "longest,list"
 vim.o.wildmenu = true
 
 local use_obj = true
-vim.g.fzf_layout = { down = "~70%"}
 vim.g.obj_path = vim.fn.expand("~/.cache/zsh/zsh-hist-obj/.obj")
 
 -- 配色方案
