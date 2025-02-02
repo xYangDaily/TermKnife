@@ -13,6 +13,7 @@ vim.g.obj_path = vim.fn.expand("~/.cache/zsh/zsh-hist-obj/.obj")
 -- 配色方案
 vim.cmd("colorscheme habamax")
 vim.o.cursorline = true
+vim.o.number = true
 
 -- Leader 键
 vim.g.mapleader = " "
@@ -114,9 +115,9 @@ if use_obj then
     vim.cmd('HistObjSearchTerm')
   end)
 end
+require('teletag')
 
 require('nerdtreeconf')
-
 -- ========== Settings For Terminal ==========
 vim.api.nvim_set_keymap("c", "<C-j>", "<DOWN>", { noremap = true })
 vim.api.nvim_set_keymap("c", "<C-k>", "<UP>", { noremap = true })
