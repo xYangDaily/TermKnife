@@ -23,8 +23,8 @@ Plug 'junegunn/fzf', { 'do': { -> fzf#install() }, 'frozen': 1 }
 Plug 'junegunn/fzf.vim', {'frozen': 1}
 Plug 'preservim/nerdtree', {'frozen': 1}
 
-Plug 'nvim-lua/plenary.nvim', {'frozen':1}
-Plug 'nvim-telescope/telescope.nvim', {frozen:1}
+Plug 'nvim-lua/plenary.nvim', {'frozen': 1}
+Plug 'nvim-telescope/telescope.nvim', {'frozen': 1}
 
 Plug 'vim-airline/vim-airline', {'frozen': 1}
 Plug 'vim-airline/vim-airline-themes', {'frozen': 1}
