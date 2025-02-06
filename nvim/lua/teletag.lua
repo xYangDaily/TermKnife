@@ -95,5 +95,4 @@ function TagMenu()
 end
 
 -- 绑定快捷键触发弹出菜单
-vim.api.nvim_set_keymap('n', '<c-t>', ':lua TagMenu()<CR>', { noremap = true, silent = true })
 

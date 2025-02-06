@@ -4,8 +4,6 @@ vim.o.fdm = "syntax"
 vim.o.hidden = true
 vim.o.encoding = "utf-8"
 vim.cmd("syntax on")
-vim.o.wildmode = "longest,list"
-vim.o.wildmenu = true
 
 local use_obj = true
 vim.g.obj_path = vim.fn.expand("~/.cache/zsh/zsh-hist-obj/.obj")
@@ -22,12 +20,9 @@ vim.g.mapleader = " "
 require('plugins')
 
 -- ========== Input ==========
-vim.keymap.set("i", "<CR>", "<CR>x<BS>")
-vim.keymap.set("n", "o", "ox<BS>")
-vim.keymap.set("n", "O", "Ox<BS>")
-
 vim.keymap.set("i", "<C-y>", "<Left><C-o>dvT<Space>")
 vim.keymap.set("n", "ci<Space>", "f<Space>i<C-y>")
+
 
 -- ========== Motion In Cache ==========
 vim.keymap.set("n", "U", "J")
@@ -73,8 +68,17 @@ vim.g.select_and_search_active = 3
 vim.keymap.set("n", "<C-f>", ":Lines<CR>")
 
 -- ========== Settings For Tab ==========
-vim.keymap.set("n", "<C-s>", ":BD!<CR>")
 vim.keymap.set("n", "<C-x>", ":close!<CR>")
+vim.keymap.set("n", "<C-s>", ":BD!<CR>")
+vim.keymap.set('n', '<leader>s', function()
+  local cursor_pos = vim.fn.getpos('.')
+  local win_view = vim.fn.winsaveview()
+  vim.cmd('%bdelete')
+  vim.cmd('edit #')
+  vim.fn.setpos('.', cursor_pos)
+  vim.fn.winrestview(win_view)
+  vim.cmd('bdelete#')
+end, { noremap = true })
 
 vim.api.nvim_set_keymap('n', '(', ':bp<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', ')', ':bn<CR>', { noremap = true, silent = true })
@@ -115,9 +119,19 @@ if use_obj then
     vim.cmd('HistObjSearchTerm')
   end)
 end
-require('teletag')
 
 require('nerdtreeconf')
+
+-- ========== Settings For Gramma ==========
+vim.o.wildmode = "longest,list"
+vim.o.wildmenu = true
+vim.api.nvim_set_keymap('i', '<Tab>', [[
+  col('.') > 1 && matchstr(getline('.')[col('.') - 2:col('.') - 2], '\S') != '' ? "\<C-n>" : "\<Tab>"
+]], {expr = true, noremap = true})
+
+require('teletag')
+vim.api.nvim_set_keymap('n', '<c-g>', ':lua TagMenu()<CR>', { noremap = true, silent = true })
+
 -- ========== Settings For Terminal ==========
 vim.api.nvim_set_keymap("c", "<C-j>", "<DOWN>", { noremap = true })
 vim.api.nvim_set_keymap("c", "<C-k>", "<UP>", { noremap = true })
@@ -127,7 +141,6 @@ vim.api.nvim_set_keymap("c", "<M-l>", "<S-Right>", { noremap = true })
 
 vim.api.nvim_set_keymap("n", "CD", ":cd %:p:h<CR>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<C-c>", ":echo expand('%:p:h')<CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "<C-g>", "<C-]>", { noremap = true, silent = true })
 
 -- ========== Format ==========
 vim.o.tabstop = 2
