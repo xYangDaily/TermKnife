@@ -5,14 +5,14 @@ local previewers = require('telescope.previewers')
 local conf = require('telescope.config').values
 local actions = require('telescope.actions')
 local action_state = require('telescope.actions.state')
-
+local entry_display = require('telescope.pickers.entry_display')
+local telescopeUtilities = require('telescope.utils')
 
 -- 创建带有预览的选择菜单
 function TagMenu()
   local word = vim.fn.expand('<cword>')  -- 获取当前光标下的单词
   local taglist = vim.fn.taglist(word)  -- 使用 taglist 获取该词的所有 taglist
 
-  -- 如果没有找到 taglist，返回空表
   if not taglist or #taglist == 0 then
     print("no relavant tags")
     return 
@@ -27,14 +27,34 @@ function TagMenu()
     finder = finders.new_table {
       results = vim.tbl_keys(taginfo),
       entry_maker = function(entry)
-        return {
+        -- 获取原始条目数据
+        local originalEntryTable = {
           value = taginfo[entry].path,
-          display = string.format("%-45s | %s", taginfo[entry].name, taginfo[entry].path),
           ordinal = taginfo[entry].name,
           line = taginfo[entry].line,
           name = taginfo[entry].name,
           path = taginfo[entry].path
         }
+
+        -- 创建自定义显示器
+        local displayer = entry_display.create({
+          separator = ' ',
+          items = {
+            { width = nil },  -- name 列的宽度
+            { width = nil },  -- path 列的宽度
+            { remaining = true },  -- 剩余空间自适应
+          }
+        })
+
+        -- 自定义显示格式
+        originalEntryTable.display = function(entry)
+          return displayer({
+            { entry.name },  -- 尾部显示
+            { entry.path, 'TelescopeResultsComment' },  -- 使用注释样式显示路径
+          })
+        end
+
+        return originalEntryTable
       end,
     },
     
@@ -52,6 +72,7 @@ function TagMenu()
           callback = function(bufnr)
             pcall(vim.api.nvim_win_set_cursor, self.state.winid, { line, 0 })
             vim.api.nvim_buf_call(self.state.bufnr, function() vim.cmd "norm! zz" end)
+            vim.api.nvim_buf_add_highlight(self.state.bufnr, -1, 'Search', line - 1, 0, -1)
           end
       })
       end,
