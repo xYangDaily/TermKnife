@@ -1,12 +1,24 @@
-local histobj = vim.fn.stdpath('config') .. '/plugged/hist-obj/autoload/histobj.vim'
-if vim.fn.isdirectory(vim.fn.fnamemodify(histobj, ":p:h")) == 1 then
-    vim.cmd("source " .. histobj)
+
+-- local histobj = vim.fn.stdpath('config') .. '/plugged/hist-obj/autoload/histobj.vim'
+-- if vim.fn.isdirectory(vim.fn.fnamemodify(histobj, ":p:h")) == 1 then
+--     vim.cmd("source " .. histobj)
+-- end
+-- 
+-- local histobjsearch = vim.fn.stdpath('config') .. '/plugged/hist-obj/autoload/histobjsearch.vim'
+-- if vim.fn.isdirectory(vim.fn.fnamemodify(histobjsearch, ":p:h")) == 1 then
+--     vim.cmd("source " .. histobjsearch)
+-- end
+
+local function load_vim_scripts_from_dir(directory)
+  local files = vim.fn.globpath(directory, "*.vim", false, true)
+  for _, file in ipairs(files) do
+    vim.cmd("source " .. file)
+  end
 end
 
-local histobjsearch = vim.fn.stdpath('config') .. '/plugged/hist-obj/autoload/histobjsearch.vim'
-if vim.fn.isdirectory(vim.fn.fnamemodify(histobjsearch, ":p:h")) == 1 then
-    vim.cmd("source " .. histobjsearch)
-end
+local vimscriptDir = vim.fn.stdpath('config') .. '/vimscript'
+load_vim_scripts_from_dir(vimscriptDir)
+
 
 vim.cmd [[
 call plug#begin()
@@ -35,7 +47,6 @@ Plug 'tpope/vim-eunuch', {'frozen': 1}
 Plug 'qpkorr/vim-bufkill', {'frozen': 1}
 Plug 'breuckelen/vim-resize', {'frozen': 1}
 Plug 'mhinz/vim-startify', {'frozen': 1}
-
 
 call plug#end()
 ]]
