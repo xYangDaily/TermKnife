@@ -79,7 +79,7 @@ function! HistObjTermOpenSink(selected)
     let result = ":" . g:histobj_fst_part . formatted . g:histobj_thr_part 
     call feedkeys(result, 'n')
     
-    let pos = len(g:histobj_fst_part) + len(formatted) - 1
+    let pos = len(g:histobj_fst_part) + len(formatted) + 1
     let repos = "\<c-r>=setcmdpos(" . pos . ")[1]\<cr>"
     call feedkeys(repos, 'l')
   else
@@ -93,21 +93,20 @@ function! HistObjSearchTerm()
   let cursor_pos = getcmdpos()
   let left_of_cursor = strpart(cmdline, 0, cursor_pos - 1)
   let right_of_cursor = strpart(cmdline, cursor_pos - 1)
-  let space_pos = len(left_of_cursor) - match(reverse(left_of_cursor), '\s') - 1
 
-  if space_pos >= len(left_of_cursor)
-      let first_part = ''
-      let second_part = left_of_cursor
+  let last_space = strridx(left_of_cursor, ' ')
+  if last_space != -1
+    let first_part = strpart(left_of_cursor, 0, last_space + 1)  " 获取空格前的部分
+    let second_part = strpart(left_of_cursor, last_space + 1)  " 获取空格后的部分
   else
-      let first_part = strpart(left_of_cursor, 0, space_pos + 1)
-      let second_part = strpart(left_of_cursor, space_pos + 1 )
+    let first_part = ''
+    let second_part = left_of_cursor
   endif
-  
+
   let g:histobj_cmdline = cmdline
   let g:histobj_fst_part = first_part
   let g:histobj_sec_part = second_part
   let g:histobj_thr_part = right_of_cursor
-  
 
   call feedkeys("\<C-c>", 'n')
 
