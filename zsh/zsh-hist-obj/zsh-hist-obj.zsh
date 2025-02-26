@@ -86,10 +86,10 @@ function __howsel {
   selected=( $(tac $HIST_OBJ_LOG | awk '!x[$2]++'  | awk '{print $2}' | \
     while read line; do
         # 如果路径是当前目录的绝对路径，转换为相对路径
-        if [[ "$line" == $(pwd)* ]]; then
+        if [[ ! -z "$line" ]] && [[ -e "$line" ]] && [[ "$line" == $(pwd)* ]]; then
             relative_path=$(realpath --relative-to=$(pwd) "$line")
             echo "./$relative_path"
-        else
+        elif [[ ! -z "$line" ]]; then
             echo "$line"
         fi
     done | \
