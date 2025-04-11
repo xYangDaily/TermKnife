@@ -28,7 +28,7 @@ function attach_elem_after_history_object(){
   [ -z $var ] && return
   [ ! -e $var ] && return
 
-  elem=`realpath -s $var`
+  elem=`realpath $var`
 
   index=`tail -1 $HIST_OBJ_LOG | awk 'END{if (NF==0) print 0; else print $1 + 1}'`
   sub_objs=(`find -L $elem -maxdepth 1`)
@@ -74,16 +74,22 @@ function attach_parts_after_history_object() {
 add-zsh-hook -Uz precmd attach_parts_after_history_object
 
 sort_history_object() {
-  tac $HIST_OBJ_LOG | awk '!x[$2]++'  | sort -n -k1,1 -o $HIST_OBJ_LOG
+  awk '{a[NR]=$0} END{for(i=NR;i>0;i--) print a[i]}'  $HIST_OBJ_LOG | awk '!x[$2]++'  | sort -n -k1,1 -o $HIST_OBJ_LOG
 }
 add-zsh-hook -Uz periodic sort_history_object
 
+remove_prefix() {
+  a=$1
+  b=$2
+  # 使用 zsh 的字符串操作来去掉 b 中的 a 前缀
+  echo ${b#$a}
+}
 
 function __howsel {
   local selected num
   setopt localoptions noglobsubst noposixbuiltins pipefail no_aliases 2> /dev/null
 
-  selected=( $(tac $HIST_OBJ_LOG | awk '!x[$2]++'  | awk '{print $2}' | \
+  selected=( $(awk '{a[NR]=$0} END{for(i=NR;i>0;i--) print a[i]}' $HIST_OBJ_LOG | awk '!x[$2]++'  | awk '{print $2}' | \
     while read line; do
         # 如果路径是当前目录的绝对路径，转换为相对路径
         if [[ -z "$line" ]] || [[ ! -e "$line" ]]; then
@@ -91,8 +97,9 @@ function __howsel {
         fi
 
         if [[ "$line" == $(pwd)* ]]; then
-          relative_path=$(realpath --relative-to=$(pwd) "$line")
-          echo "./$relative_path"
+            #relative_path=$(realpath --relative-to=$(pwd) "$line")
+            relative_path=$(remove_prefix "$(pwd)" "$line")
+            echo ".$relative_path"
         else
           echo "$line"
         fi
@@ -148,7 +155,7 @@ fix_history_object() {
   rm -f ${HIST_TMP_LOG} && touch ${HIST_TMP_LOG} || return
   cat $HIST_OBJ_LOG | awk '{print $2}' | while read line; do
     if [ ! -z $line ] && [ -e $line ];then 
-      real_path=`realpath -s $line`
+      real_path=`realpath $line`
       echo $real_path >> ${HIST_TMP_LOG}
     fi
   done

@@ -1,6 +1,5 @@
 -- NerdTree
 vim.g.NERDTreeWinPos = 'right'
-
 vim.g.NERDTreeMapCloseDir = vim.g.NERDTreeMapCloseDir or 'h'
 vim.g.NERDTreeMapActivateNode = vim.g.NERDTreeMapActivateNode or 'l'
 vim.g.NERDTreeMapJumpLastChild = '' -- delete default J
